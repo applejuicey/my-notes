@@ -1,18 +1,42 @@
 <template>
   <div class="note-display">
-    <h1>This is a note display page</h1>
-    <div v-if="checkNoteID">
-      you are reading note: id={{ $route.params.noteid}}
-    </div>
-    <div v-else>
-      you have entered an error ID
-    </div>
+
+    <el-row>
+
+      <!--左侧导航栏-->
+      <el-col :span="6">
+        <div>
+          <left-nav></left-nav>
+        </div>
+      </el-col>
+      <!--左侧导航栏end-->
+
+      <!--笔记内容区-->
+      <el-col :span="18">
+        <div>
+          <h1>This is a note display page</h1>
+          <div v-if="checkNoteID">
+            you are reading note: id={{ $route.params.noteid}}
+          </div>
+          <div v-else>
+            you have entered an error ID
+          </div>
+        </div>
+      </el-col>
+      <!--笔记内容区end-->
+
+    </el-row>
+
   </div>
 </template>
 
 <script>
+  import LeftNav from '@/components/LeftNav.vue';
   export default {
     name: 'note-display',
+    components: {
+      LeftNav,
+    },
     computed : {
 
       checkNoteID: function () {

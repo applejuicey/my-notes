@@ -1,7 +1,6 @@
 <template>
   <div id="app">
 
-
     <el-row>
 
       <!--顶部导航栏-->
@@ -14,13 +13,12 @@
 
     </el-row>
 
-
     <el-row>
 
       <!--内容区-->
       <el-col :span="24">
         <div>
-          <main-content></main-content>
+          <router-view/>
         </div>
       </el-col>
       <!--内容区end-->
@@ -32,12 +30,10 @@
 
 <script>
   import TopNav from '@/components/TopNav.vue';
-  import MainContent from '@/components/MainContent.vue';
   export default {
     name: 'app',
     components: {
       TopNav,
-      MainContent,
     },
   }
 </script>
