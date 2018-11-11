@@ -1,13 +1,46 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link :to="{name: 'about', params: { }}">About</router-link> |
-      <router-link :to="{name: 'noteDisplay', params: { noteid: 1235}}">NoteDisplay</router-link>
-    </div>
-    <router-view/>
+
+
+    <el-row>
+
+      <!--顶部导航栏-->
+      <el-col :span="24">
+        <div>
+          <top-nav></top-nav>
+        </div>
+      </el-col>
+      <!--顶部导航栏end-->
+
+    </el-row>
+
+
+    <el-row>
+
+      <!--内容区-->
+      <el-col :span="24">
+        <div>
+          <main-content></main-content>
+        </div>
+      </el-col>
+      <!--内容区end-->
+
+    </el-row>
+
   </div>
 </template>
+
+<script>
+  import TopNav from '@/components/TopNav.vue';
+  import MainContent from '@/components/MainContent.vue';
+  export default {
+    name: 'app',
+    components: {
+      TopNav,
+      MainContent,
+    },
+  }
+</script>
 
 <style>
 #app {
@@ -16,15 +49,5 @@
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-}
-#nav {
-  padding: 30px;
-}
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
-#nav a.router-link-exact-active {
-  color: #42b983;
 }
 </style>

@@ -12,8 +12,9 @@
 
 <script>
   export default {
-    name: 'NoteDisplay',
+    name: 'note-display',
     computed : {
+
       checkNoteID: function () {
         if (isNaN(this.$route.params.noteid)) {
           // 传入的noteid不是数字
@@ -23,6 +24,22 @@
           return true;
         }
       },
+
+    },
+    mounted: function () {
+
+      // 挂载时设置导航栏索引
+      this.setTopNavActiveIndex();
+
+    },
+    methods: {
+
+      // 设置顶部导航栏索引，笔记展示页为3
+      setTopNavActiveIndex: function () {
+        let this_vm = this;
+        this_vm.$store.dispatch('setTopNavActiveIndex', '3');
+      },
+
     },
   }
 </script>
