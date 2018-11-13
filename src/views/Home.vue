@@ -1,19 +1,61 @@
 <template>
   <div class="home">
+
     <!--<img alt="Vue logo" src="../assets/logo.png">-->
     <!--<HelloWorld msg="Welcome to Your Vue.js App"/>-->
     <h1>this is home</h1>
+
+    <el-row>
+
+      <!--内容区1的卡片-->
+      <el-col :span="12">
+        <div>
+          <content-card :cardName="'no1'"></content-card>
+        </div>
+      </el-col>
+      <!--内容区1的卡片end-->
+
+      <!--内容区2的卡片-->
+      <el-col :span="12">
+        <div>
+          <content-card :cardName="'no2'"></content-card>
+        </div>
+      </el-col>
+      <!--内容区2的卡片end-->
+
+    </el-row>
+
+    <el-row>
+
+      <!--内容区3的卡片-->
+      <el-col :span="12">
+        <div>
+          <content-card :cardName="'no3'"></content-card>
+        </div>
+      </el-col>
+      <!--内容区3的卡片end-->
+
+      <!--内容区4的卡片-->
+      <el-col :span="12">
+        <div>
+          <content-card :cardName="'no4'"></content-card>
+        </div>
+      </el-col>
+      <!--内容区4的卡片end-->
+
+    </el-row>
+
+
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-// import HelloWorld from '@/components/HelloWorld.vue'
-
+import ContentCard from '@/components/ContentCard.vue'
 export default {
   name: 'home',
   components: {
-    // HelloWorld
+    ContentCard,
   },
   mounted: function () {
 
