@@ -12,7 +12,7 @@
       </el-menu-item>
 
       <el-menu-item index="3">
-        <router-link :to="{name: 'noteDisplay', params: { noteid: 1235}}" tag="span">NoteDisplay id=123</router-link>
+        <router-link :to="{name: 'noteDisplay', params: { noteid: 1235}}" tag="span">查看笔记</router-link>
       </el-menu-item>
 
       <!--<el-submenu index="2">-->

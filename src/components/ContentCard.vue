@@ -9,7 +9,7 @@
       </div>
 
       <div>
-        <note-list></note-list>
+        <note-list :noteTitleLinkArray="noteTitleLinkArray"></note-list>
       </div>
 
     </el-card>
@@ -28,7 +28,11 @@
       cardName: {
         type: String,
         required: true,
-      }
+      },
+      noteTitleLinkArray: {
+        type: Array,
+        required: true,
+      },
     },
     data() {
       return {
