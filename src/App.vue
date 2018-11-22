@@ -2,27 +2,27 @@
   <div id="app">
 
     <el-row>
-
-      <!--顶部导航栏-->
       <el-col :span="24">
-        <div>
+
+        <!--顶部导航栏-->
+        <div class="top-nav-container">
           <top-nav></top-nav>
         </div>
-      </el-col>
-      <!--顶部导航栏end-->
+        <!--顶部导航栏end-->
 
+      </el-col>
     </el-row>
 
     <el-row>
-
-      <!--内容区-->
       <el-col :span="24">
-        <div>
+
+        <!--内容区-->
+        <div class="main-content-container">
           <router-view/>
         </div>
-      </el-col>
-      <!--内容区end-->
+        <!--内容区end-->
 
+      </el-col>
     </el-row>
 
   </div>
@@ -35,15 +35,33 @@
     components: {
       TopNav,
     },
+    data () {
+      return {
+
+      }
+    },
+    mounted () {
+
+    },
+    methods: {
+
+    },
   }
 </script>
 
 <style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
+  #app {
+    font-family: 'Avenir', Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-align: center;
+    color: #2c3e50;
+  }
+  .top-nav-container {
+    height: 10vh;
+    width: 100%;
+  }
+  .main-content-container {
+    height: 80vh;
+  }
 </style>

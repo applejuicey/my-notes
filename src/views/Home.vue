@@ -103,3 +103,10 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+  .home {
+    overflow-y: scroll;
+    height: inherit;
+  }
+</style>
