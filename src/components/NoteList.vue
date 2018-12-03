@@ -29,6 +29,9 @@
     computed: {
 
     },
+    mounted () {
+
+    },
     methods: {
 
     },
