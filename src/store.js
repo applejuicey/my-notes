@@ -6,7 +6,7 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     topNavActiveIndex: null,
-    sectionTitlesArray: [],
+    sectionHeadingsArray: [],
   },
   mutations: {
 
@@ -14,8 +14,8 @@ export default new Vuex.Store({
       state.topNavActiveIndex = indexFromCurrentComponent;
     },
 
-    processSectionTitlesArray: (state, titlesArrayFromNoteRenderer) => {
-      state.sectionTitlesArray = titlesArrayFromNoteRenderer;
+    processSectionHeadingsArray: (state, headingsArrayFromNoteRenderer) => {
+      state.sectionHeadingsArray = headingsArrayFromNoteRenderer;
     },
 
   },
@@ -25,8 +25,8 @@ export default new Vuex.Store({
       commit('processTopNavActiveIndex', indexFromCurrentComponent);
     },
 
-    setSectionTitlesArray: ({commit}, titlesArrayFromNoteRenderer) => {
-      commit('processSectionTitlesArray', titlesArrayFromNoteRenderer);
+    setSectionHeadingsArray: ({commit}, headingsArrayFromNoteRenderer) => {
+      commit('processSectionHeadingsArray', headingsArrayFromNoteRenderer);
     },
 
   }

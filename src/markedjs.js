@@ -3,15 +3,26 @@ import marked from 'marked';
 
 // 自定义renderer
 let renderer = new marked.Renderer();
-// 为heading的ID设置一个计数器
+// 为heading的ID设置一个计数器，目的是生成唯一的ID
 let counter = 0;
-// console.log('set counter!:', counter);
 // 自定义heading的渲染
 renderer.heading = function (text, level) {
   // let escapedText = text.toLowerCase().replace(/[^\w]+/g, '-');
-  // console.log('use counter:', counter);
   counter = counter + 1;
-  return `<h${level} id="heading${counter}" class="headingLevel${level}">${text}</h${level}>`;
+  // // 根据level的不同，返回不同的ID和CLASS
+  // switch(level)
+  // {
+  //   case 1:
+  //     // 只有笔记的标题才能使用H1
+  //     return `<h${level} id="noteTitle${counter}" class="noteTitle">${text}</h${level}>`;
+  //   case 2:
+  //     // 只有每个section的标题才能使用H2
+  //     return `<h${level} id="sectionTitle${counter}" class="sectionTitle">${text}</h${level}>`;
+  //   default:
+  //     // 其余的情况以后再添加
+  //     return `<h${level} id="heading${counter}" class="headingLevel${level}">${text}</h${level}>`;
+  // }
+  return `<h${level} id="markedJSHeading${counter}" class="markedJSHeadingLevel${level}">${text}</h${level}>`;
 };
 
 // 配置部分全局选项设置

@@ -62,6 +62,6 @@
     width: 100%;
   }
   .main-content-container {
-    height: 80vh;
+    height: 88vh;
   }
 </style>

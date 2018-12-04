@@ -24,14 +24,47 @@
         </el-submenu>
       </el-submenu>
 
-      <template v-for="(object, index) in sectionTitlesArray">
-        <el-menu-item :index="index + 2 + ''" @click="scrollToID(object.sectionTitleID)">
+      <template v-for="(object, index) in sectionHeadingsArray">
+        <el-menu-item :index="index + 2 + ''" @click="scrollToID(object.sectionRowNumber)">
           <i class="el-icon-menu"></i>
           <span slot="title">
-            {{object.sectionTitleText}}
+            {{object.sectionHeadingText}}
           </span>
         </el-menu-item>
       </template>
+
+      <!--<el-menu-item>-->
+        <!--<i class="el-icon-menu"></i>-->
+        <!--<span slot="title">-->
+            <!--1-->
+          <!--</span>-->
+      <!--</el-menu-item>-->
+      <!--<el-menu-item>-->
+        <!--<i class="el-icon-menu"></i>-->
+        <!--<span slot="title">-->
+            <!--1-->
+          <!--</span>-->
+      <!--</el-menu-item>-->
+      <!--<el-menu-item>-->
+        <!--<i class="el-icon-menu"></i>-->
+        <!--<span slot="title">-->
+            <!--1-->
+          <!--</span>-->
+      <!--</el-menu-item>-->
+      <!--<el-menu-item>-->
+        <!--<i class="el-icon-menu"></i>-->
+        <!--<span slot="title">-->
+            <!--1-->
+          <!--</span>-->
+      <!--</el-menu-item>-->
+      <!--<el-menu-item>-->
+        <!--<i class="el-icon-menu"></i>-->
+        <!--<span slot="title">-->
+            <!--1-->
+          <!--</span>-->
+      <!--</el-menu-item>-->
+
+
 
     </el-menu>
 
@@ -49,7 +82,7 @@
     },
     data() {
       return {
-        sectionTitlesArray: [],
+        sectionHeadingsArray: [],
       };
     },
     computed: {
@@ -62,7 +95,8 @@
       // 在DOM更新之后执行：
       this_vm.$nextTick(() => {
 
-        this_vm.sectionTitlesArray = this.$store.state.sectionTitlesArray;
+        // 将vuex中存储的section标题信息载入
+        this_vm.sectionHeadingsArray = this.$store.state.sectionHeadingsArray;
 
       });
 
@@ -77,9 +111,10 @@
         console.log(key, keyPath);
       },
 
+      // 根据传入的值计算锚点元素的ID，并滚动
       scrollToID: function (id) {
-        console.log('scroll to id:', id);
-        document.getElementById(id).scrollIntoView();
+        let baseID = 'sectionRowNumber';
+        document.getElementById(baseID + id + '').scrollIntoView();
       },
 
     },
@@ -89,6 +124,6 @@
 <style scoped>
  .left-nav {
    overflow-y: scroll;
-   height: 70vh;
+   height: inherit;
  }
 </style>

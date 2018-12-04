@@ -33,9 +33,12 @@
       <el-col :span="24">
 
         <template v-for="(section, index) in noteDetail.noteContent">
-          <el-row>
+          <el-row class="noteSectionRow" :id="'sectionRowNumber' + (index + 1)">
             <el-col :span="24">
-              <div v-html="convertMarkdownToHTML(section.sectionTitle)" class="sectionTitle"></div>
+              <div class="sectionTitle">
+                <div class="sectionNumber">Section {{index + 1}}:</div>
+                <div class="sectionHeading" v-html="convertMarkdownToHTML(section.sectionTitle)"></div>
+              </div>
               <div v-html="convertMarkdownToHTML(section.sectionContent)" class="sectionContent"></div>
             </el-col>
           </el-row>
@@ -81,19 +84,18 @@
       // 在DOM更新之后执行：
       this_vm.$nextTick(() => {
 
-        // 在视图更新之后，获取所有class="sectionTitle"元素的textContent，组装成数组，使用vuex存储，供左侧导航栏使用
-        let sectionTitleElementsArray = document.getElementsByClassName('sectionTitle');
-        console.log(sectionTitleElementsArray);
-        let sectionTitlesArray = [];
-        for (let i = 0; i < sectionTitleElementsArray.length; i++) {
-          console.log(sectionTitleElementsArray[i].children[0].id);
-          console.log(sectionTitleElementsArray[i].textContent);
-          sectionTitlesArray.push({
-            sectionTitleText: sectionTitleElementsArray[i].textContent,
-            sectionTitleID: sectionTitleElementsArray[i].children[0].id,
+        // 在视图更新之后，获取所有class="sectionHeading"元素的textContent，组装成数组，使用vuex存储，供左侧导航栏使用
+        let sectionHeadingElementsArray = document.getElementsByClassName('sectionHeading');
+        let sectionHeadingsArray = [];
+        for (let i = 0; i < sectionHeadingElementsArray.length; i++) {
+          sectionHeadingsArray.push({
+            // 用于保存section的标题
+            sectionHeadingText: sectionHeadingElementsArray[i].textContent,
+            // 用于保存滚动的锚点元素
+            sectionRowNumber: i + 1,
           });
         }
-        this_vm.setSectionTitlesArray(sectionTitlesArray);
+        this_vm.setSectionHeadingsArray(sectionHeadingsArray);
       });
 
     },
@@ -106,9 +108,9 @@
       },
 
       // 在DOM更新后将所有section的title存储到vuex中
-      setSectionTitlesArray: function (array) {
+      setSectionHeadingsArray: function (array) {
         let this_vm = this;
-        this_vm.$store.dispatch('setSectionTitlesArray', array);
+        this_vm.$store.dispatch('setSectionHeadingsArray', array);
       },
 
     },
@@ -116,5 +118,31 @@
 </script>
 
 <style scoped>
-
+  .note-renderer {
+    overflow-y: scroll;
+    overflow-x: hidden;
+    height: inherit;
+    text-align: left;
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+  .note-header-title h1{
+    text-align: center;
+    font-weight: 900;
+  }
+  .noteSectionRow {
+    border: 1px solid #ebeef5;
+    box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
+    border-radius: 4px;
+    padding: 10px;
+    margin-top: 3px;
+    margin-bottom: 3px;
+  }
+  .sectionHeading >>> .markedJSHeadingLevel2 {
+    text-align: center;
+  }
+  .sectionNumber {
+    font-weight: lighter;
+    font-size: larger;
+  }
 </style>
