@@ -87,7 +87,9 @@
           leftCatalogNavStatus: false,  //左侧导航栏状态，默认收起
           rightColumnStatus: false, //左侧栏状态，默认收起
         },
-        noteDetail: {},
+        noteDetail: {}, //存储拉取到的笔记信息
+        loadingsArray: [],  //存储loadings的数组
+
       }
     },
     computed : {
@@ -103,13 +105,21 @@
       },
 
     },
-    mounted: function () {
+    mounted () {
+
+      let this_vm = this;
 
       // 挂载时设置导航栏索引
-      this.setTopNavActiveIndex();
+      this_vm.setTopNavActiveIndex();
+
+      // 挂载时为noteRow获取一个loading实例
+      this_vm.loadingsArray[0] = this_vm.$loading({
+          target: document.querySelector('.content-note-renderer-container'),
+          lock: true,
+        });
 
       // 挂载时从router中获得noteID并从服务器拉取这条笔记
-      this.getNote(this.$route.params.noteid);
+      this_vm.getNote(this_vm.$route.params.noteid);
 
     },
     methods: {
@@ -130,6 +140,10 @@
         }).then(function (response) {
           console.log(response);
           this_vm.noteDetail = response.data.data.noteDetail;
+          // 拉取并存储成功后关闭loading遮罩
+          setTimeout(() => {
+            this_vm.loadingsArray[0].close();
+          }, 1000);
         }).catch(function (error) {
           console.log(error)
         })

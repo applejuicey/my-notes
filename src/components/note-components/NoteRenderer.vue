@@ -66,7 +66,6 @@
     data() {
       return {
 
-
       };
     },
     computed : {
@@ -96,6 +95,7 @@
           });
         }
         this_vm.setSectionHeadingsArray(sectionHeadingsArray);
+
       });
 
     },
@@ -123,8 +123,7 @@
     overflow-x: hidden;
     height: inherit;
     text-align: left;
-    margin-left: 10px;
-    margin-right: 10px;
+    margin-left: 5px;
   }
   .note-header-title h1{
     text-align: center;

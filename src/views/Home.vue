@@ -9,7 +9,7 @@
 
       <!--内容区1的卡片-->
       <el-col :span="12">
-        <div>
+        <div class="card-container">
           <content-card :cardName="'no1'" :noteTitleLinkArray="noteTitleLinkArray.type1"></content-card>
         </div>
       </el-col>
@@ -17,7 +17,7 @@
 
       <!--内容区2的卡片-->
       <el-col :span="12">
-        <div>
+        <div class="card-container">
           <content-card :cardName="'no2'" :noteTitleLinkArray="noteTitleLinkArray.type2"></content-card>
         </div>
       </el-col>
@@ -29,7 +29,7 @@
 
       <!--内容区3的卡片-->
       <el-col :span="12">
-        <div>
+        <div class="card-container">
           <content-card :cardName="'no3'" :noteTitleLinkArray="noteTitleLinkArray.type3"></content-card>
         </div>
       </el-col>
@@ -37,7 +37,7 @@
 
       <!--内容区4的卡片-->
       <el-col :span="12">
-        <div>
+        <div class="card-container">
           <content-card :cardName="'no4'" :noteTitleLinkArray="noteTitleLinkArray.type4"></content-card>
         </div>
       </el-col>
@@ -66,16 +66,27 @@ export default {
         type3: [],
         type4: [],
       }, // 存放从服务器拉取到的笔记标题连接的信息，包含4个类型
+      loadingsArray: [],  //存储loadings的数组
 
     };
   },
-  mounted: function () {
+  mounted () {
+
+    let this_vm = this;
 
     // 挂载时设置导航栏索引
-    this.setTopNavActiveIndex();
+    this_vm.setTopNavActiveIndex();
+
+    // 挂载时为每个card获取一个loading实例
+    for (let i = 0; i < 4; i++) {
+      this_vm.loadingsArray[i] = this_vm.$loading({
+        target: document.querySelectorAll('.card-container')[i],
+        lock: true,
+      });
+    }
 
     // 挂载时拉取笔记标题连接的信息
-    this.getNoteTitleLinkArray();
+    this_vm.getNoteTitleLinkArray();
 
   },
   methods: {
@@ -95,10 +106,16 @@ export default {
       }).then(function (response) {
         console.log(response);
         this_vm.noteTitleLinkArray = response.data.data.noteTitleLinkArray;
+        // 拉取并存储成功后关闭loading遮罩
+        setTimeout(() => {
+          for (let i = 0; i < 4; i++) {
+            this_vm.loadingsArray[i].close();
+          }
+        }, 1000);
       }).catch(function (error) {
         console.log(error)
       })
-    }
+    },
 
   },
 }

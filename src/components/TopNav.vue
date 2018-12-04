@@ -11,8 +11,8 @@
         <router-link :to="{name: 'about', params: { }}" tag="span">关于</router-link>
       </el-menu-item>
 
-      <el-menu-item index="3">
-        <router-link :to="{name: 'noteDisplay', params: { noteid: 1235}}" tag="span">查看笔记</router-link>
+      <el-menu-item index="3" disabled>
+        <span>查看笔记</span>
       </el-menu-item>
 
       <!--<el-submenu index="2">-->
