@@ -1,3 +1,5 @@
+<!--接受一个noteDetail对象，将其渲染为笔记-->
+<!--调用该组件时，其父级元素需要设置一个height，该组件才能显示纵向滚动条-->
 <template>
   <div class="note-renderer">
 
@@ -15,11 +17,23 @@
 
         <!--笔记相关信息-->
         <el-row class="note-header-briefInfo">
-          <el-col :span="24">
-            <div>{{noteDetail.publishTime}}</div>
-            <div>{{noteDetail.author}}</div>
-            <div>{{noteDetail.clickedCounter}}</div>
-            <div>{{noteDetail.tag}}</div>
+          <el-col :span="6">
+            发布时间:&nbsp;
+            <span>{{noteDetail.publishTime}}</span>
+          </el-col>
+          <el-col :span="6">
+            作者:&nbsp;
+            <span>{{noteDetail.author}}</span>
+          </el-col>
+          <el-col :span="6">
+            阅读量:&nbsp;
+            <span>{{noteDetail.clickedCounter}}</span>
+          </el-col>
+          <el-col :span="6">
+            标签:&nbsp;
+            <template v-for="(tag, index) in noteDetail.tags">
+              <el-tag size="mini">{{tag}}</el-tag>&nbsp;
+            </template>
           </el-col>
         </el-row>
         <!--笔记相关信息-->
@@ -129,6 +143,10 @@
     text-align: center;
     font-weight: 900;
   }
+  .note-header-briefInfo {
+    margin: 0 10px 10px 10px;
+    text-align: center;
+  }
   .noteSectionRow {
     border: 1px solid #ebeef5;
     box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
@@ -137,11 +155,17 @@
     margin-top: 3px;
     margin-bottom: 3px;
   }
-  .sectionHeading >>> .markedJSHeadingLevel2 {
-    text-align: center;
-  }
   .sectionNumber {
     font-weight: lighter;
     font-size: larger;
+  }
+  .sectionHeading >>> .markedJSHeadingLevel2 {
+    text-align: center;
+  }
+  .sectionContent >>> img {
+    max-width: 100%;
+  }
+  .sectionContent >>> pre {
+    overflow: scroll;
   }
 </style>
