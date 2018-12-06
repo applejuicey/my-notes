@@ -1,5 +1,5 @@
 <template>
-  <div class="about">
+  <div class="admin-create-note">
 
     <div class="editor-container">
       <el-row>
@@ -39,9 +39,9 @@
               </template>
 
               <el-form-item>
-                <!--<el-button type="success">预览</el-button>-->
+                <el-button type="success">保存</el-button>
                 <el-button type="primary" @click="submitNote">提交</el-button>
-                <el-button>后退</el-button>
+                <el-button>返回笔记管理</el-button>
               </el-form-item>
             </el-form>
 
@@ -50,7 +50,7 @@
 
         <el-col :span="12">
           <div class="preview-container">
-            <h1>Markdown预览</h1>
+            <h1>笔记预览</h1>
             <note-renderer :noteDetail="noteDetail"></note-renderer>
           </div>
         </el-col>
@@ -58,14 +58,13 @@
       </el-row>
     </div>
 
-
   </div>
 </template>
 
 <script>
-  import NoteRenderer from '@/components/note-components/NoteRenderer.vue'
+  import NoteRenderer from '@/components/note-components/NoteRenderer.vue';
   export default {
-    name: 'about',
+    name: 'admin-create-note',
     components: {
       NoteRenderer,
     },
@@ -94,17 +93,9 @@
     },
     mounted () {
 
-      // 挂载时设置导航栏索引
-      this.setTopNavActiveIndex();
 
     },
     methods: {
-
-      // 设置顶部导航栏索引，关于页为2
-      setTopNavActiveIndex: function () {
-        let this_vm = this;
-        this_vm.$store.dispatch('setTopNavActiveIndex', '2');
-      },
 
       // 为笔记增加一个标签
       addTag: function () {

@@ -137,7 +137,7 @@
     overflow-x: hidden;
     height: inherit;
     text-align: left;
-    margin-left: 5px;
+    margin: 10px 0 0 5px;
   }
   .note-header-title h1{
     text-align: center;
@@ -152,8 +152,7 @@
     box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
     border-radius: 4px;
     padding: 10px;
-    margin-top: 3px;
-    margin-bottom: 3px;
+    margin: 7px 0 7px 0;
   }
   .sectionNumber {
     font-weight: lighter;

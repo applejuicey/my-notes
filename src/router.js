@@ -27,6 +27,38 @@ export default new Router({
       component: () => import('./views/NoteDisplay.vue')
     },
     {
+      path: '/admin',
+      component: () => import('./views/AdminRouterView.vue'),
+      children: [
+        {
+          path: '',
+          name: 'adminLogin',
+          component: () => import('./views/AdminLogin.vue'),
+        },
+        {
+          path: 'manageNote',
+          component: () => import('./views/AdminNotesManagementRouterView.vue'),
+          children: [
+            {
+              path: '',
+              name: 'adminNotesManagement',
+              component: () => import('./views/AdminNotesManagement.vue'),
+            },
+            {
+              path: ':noteID',
+              name: 'noteManagement',
+              component: () => import('./views/AdminNoteManagement.vue'),
+            }
+          ],
+        },
+        {
+          path: 'createNote',
+          name: 'adminCreateNote',
+          component: () => import('./views/AdminCreateNote.vue'),
+        },
+      ],
+    },
+    {
       name: '404',
       path: '*',
       component: () => import('./views/Page404.vue'),
