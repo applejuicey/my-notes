@@ -3,7 +3,7 @@ import App from './App.vue';
 import router from './router';
 import store from './store';
 import element from './element';
-import axios from './axios';
+import axios from './api/axios';
 import markedjs from './markedjs';
 
 Vue.config.productionTip = false;

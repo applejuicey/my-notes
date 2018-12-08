@@ -75,30 +75,29 @@
   export default {
     name: 'left-nav',
     props: {
-      // noteDetail: {
-      //   required: true,
-      //   type: Object,
-      // },
+
     },
     data() {
       return {
-        sectionHeadingsArray: [],
+
       };
     },
     computed: {
 
+      // 使用计算属性，在store中的数据更新后自动获取
+      sectionHeadingsArray: function () {
+        let this_vm = this;
+        return this_vm.$store.state.sectionHeadingsArray;
+      },
+
+    },
+    watch : {
+
     },
     mounted () {
 
-      let this_vm = this;
-
-      // 在DOM更新之后执行：
-      this_vm.$nextTick(() => {
-
-        // 将vuex中存储的section标题信息载入
-        this_vm.sectionHeadingsArray = this.$store.state.sectionHeadingsArray;
-
-      });
+    },
+    updated () {
 
     },
     methods: {
@@ -114,7 +113,7 @@
       // 根据传入的值计算锚点元素的ID，并滚动
       scrollToID: function (id) {
         let baseID = 'sectionRowNumber';
-        document.getElementById(baseID + id + '').scrollIntoView();
+        document.getElementById(baseID + id).scrollIntoView();
       },
 
     },

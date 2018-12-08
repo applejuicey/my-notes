@@ -8,7 +8,7 @@
         <div class="top-tool-bar-container">
           <el-form :inline="true" :model="topToolBar" class="demo-form-inline">
             <el-form-item label="左侧导航">
-              <el-switch v-model="topToolBar.leftCatalogNavStatus"></el-switch>
+              <el-switch v-model="topToolBar.leftCatalogNavSpanNumber" active-value="6" inactive-value="0"></el-switch>
             </el-form-item>
             <el-form-item label="右侧广告">
               <el-switch v-model="topToolBar.rightColumnStatus"></el-switch>
@@ -22,11 +22,11 @@
 
     <el-row>
 
-      <!--当左侧导航栏需要展开（leftCatalogNavStatus为true）时渲染:-->
-      <div v-if="topToolBar.leftCatalogNavStatus" class="content-container-open">
+      <!--当左侧导航栏关闭时leftCatalogNavSpanNumber为0，展开时为6；右侧内容区用24-计算-->
+      <div class="content-container">
 
         <!--左侧导航栏-->
-        <el-col :span="6">
+        <el-col :span="parseInt(topToolBar.leftCatalogNavSpanNumber)">
           <div class="content-left-nav-container">
             <left-catalog-nav></left-catalog-nav>
           </div>
@@ -34,28 +34,10 @@
         <!--左侧导航栏end-->
 
         <!--笔记内容区-->
-        <el-col :span="18">
+        <el-col :span="parseInt(24 - topToolBar.leftCatalogNavSpanNumber)">
           <div class="content-note-renderer-container">
             <div v-if="checkNoteID" style="height: inherit">
-              <note-renderer :noteDetail="noteDetail"></note-renderer>
-            </div>
-            <div v-else style="height: inherit">
-              you have entered an error ID
-            </div>
-          </div>
-        </el-col>
-        <!--笔记内容区end-->
-
-      </div>
-
-      <!--当左侧导航栏需要关闭（leftCatalogNavStatus为false）时渲染:-->
-      <div v-else class="content-container-closed">
-
-        <!--笔记内容区-->
-        <el-col :span="24">
-          <div class="content-note-renderer-container">
-            <div v-if="checkNoteID" style="height: inherit">
-              <note-renderer :noteDetail="noteDetail"></note-renderer>
+              <note-renderer :noteID="noteID"></note-renderer>
             </div>
             <div v-else style="height: inherit">
               you have entered an error ID
@@ -84,11 +66,11 @@
       return {
 
         topToolBar: {
-          leftCatalogNavStatus: false,  //左侧导航栏状态，默认收起
+          leftCatalogNavSpanNumber: 0,  //左侧导航栏默认收起，所以span应该为0
           rightColumnStatus: false, //左侧栏状态，默认收起
         },
-        noteDetail: {}, //存储拉取到的笔记信息
-        loadingsArray: [],  //存储loadings的数组
+        // 从路由中获取noteID
+        noteID: this.$route.params.noteid,
 
       }
     },
@@ -112,15 +94,6 @@
       // 挂载时设置导航栏索引
       this_vm.setTopNavActiveIndex();
 
-      // 挂载时为noteRow获取一个loading实例
-      this_vm.loadingsArray[0] = this_vm.$loading({
-          target: document.querySelector('.content-note-renderer-container'),
-          lock: true,
-        });
-
-      // 挂载时从router中获得noteID并从服务器拉取这条笔记
-      this_vm.getNote(this_vm.$route.params.noteid);
-
     },
     methods: {
 
@@ -129,25 +102,6 @@
         let this_vm = this;
         this_vm.$store.dispatch('setTopNavActiveIndex', '3');
       },
-
-      // 根据ID拉取一条笔记
-      getNote(id) {
-        let this_vm = this;
-        let baseURL = 'https://easy-mock.com/mock/5bebe7bc3e54131e11d49398/mynotesdev/api/getNote';
-        this_vm.axios({
-          method: 'get',
-          url: baseURL + '?noteID=' + id,
-        }).then(function (response) {
-          console.log(response);
-          this_vm.noteDetail = response.data.data.noteDetail;
-          // 拉取并存储成功后关闭loading遮罩
-          setTimeout(() => {
-            this_vm.loadingsArray[0].close();
-          }, 1000);
-        }).catch(function (error) {
-          console.log(error)
-        })
-      }
 
     },
   }
@@ -162,10 +116,7 @@
     height: 7vh;
     border-bottom: solid 1px #e6e6e6;
   }
-  .content-container-open {
-    height: 81vh;
-  }
-  .content-container-closed {
+  .content-container {
     height: 81vh;
   }
   .content-left-nav-container {

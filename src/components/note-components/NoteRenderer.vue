@@ -1,4 +1,4 @@
-<!--接受一个noteDetail对象，将其渲染为笔记-->
+<!--接受noteID作为API调用的参数，拉取到数据后渲染出笔记-->
 <!--调用该组件时，其父级元素需要设置一个height，该组件才能显示纵向滚动条-->
 <template>
   <div class="note-renderer">
@@ -66,19 +66,24 @@
 </template>
 
 <script>
+  import { noteRendererAPIService } from '@/api/serviceList.js';
   export default {
     name: 'note-renderer',
     components: {
 
     },
     props: {
-      noteDetail: {
+      // 用noteID作为参数来从服务器拉取数据
+      noteID: {
+        type: String,
         required: true,
-        type: Object,
       },
     },
     data() {
       return {
+
+        // 用来保存从服务器拉取到的笔记
+        noteDetail: {},
 
       };
     },
@@ -93,24 +98,36 @@
 
       // 组件挂载时执行：
 
-
-      // 在DOM更新之后执行：
-      this_vm.$nextTick(() => {
-
-        // 在视图更新之后，获取所有class="sectionHeading"元素的textContent，组装成数组，使用vuex存储，供左侧导航栏使用
-        let sectionHeadingElementsArray = document.getElementsByClassName('sectionHeading');
-        let sectionHeadingsArray = [];
-        for (let i = 0; i < sectionHeadingElementsArray.length; i++) {
-          sectionHeadingsArray.push({
-            // 用于保存section的标题
-            sectionHeadingText: sectionHeadingElementsArray[i].textContent,
-            // 用于保存滚动的锚点元素
-            sectionRowNumber: i + 1,
-          });
-        }
-        this_vm.setSectionHeadingsArray(sectionHeadingsArray);
-
+      // 挂载时获取一个Loading的实例
+      let noteRendererLoading = this.$loading({
+        lock: true,
+        text: '正在获取笔记内容......',
+        // spinner: 'el-icon-loading',
+        background: 'rgba(0, 191, 255, 0.05)',
+        // 以class的方式定位loading
+        target: document.querySelector('.note-renderer'),
       });
+
+      // 挂载时调用API，并且传入Loading的实例用以关闭
+      this_vm.noteRendererAPIService(noteRendererLoading);
+
+    },
+    updated () {
+
+      let this_vm = this;
+
+      // 在视图更新之后，获取所有class="sectionHeading"元素的textContent，组装成数组，使用vuex存储，供左侧导航栏使用
+      let sectionHeadingElementsArray = document.getElementsByClassName('sectionHeading');
+      let sectionHeadingsArray = [];
+      for (let i = 0; i < sectionHeadingElementsArray.length; i++) {
+        sectionHeadingsArray.push({
+          // 用于保存section的标题
+          sectionHeadingText: sectionHeadingElementsArray[i].textContent,
+          // 用于保存滚动的锚点元素
+          sectionRowNumber: i + 1,
+        });
+      }
+      this_vm.setSectionHeadingsArray(sectionHeadingsArray);
 
     },
     methods: {
@@ -119,6 +136,32 @@
       convertMarkdownToHTML: function (markdownString) {
         let this_vm = this;
         return this_vm.marked(markdownString);
+      },
+
+      // 根据父组件传来的noteID调用API；调用成功或失败都会关闭loading
+      noteRendererAPIService: function (loading) {
+        let this_vm = this;
+        // 将noteID传入noteRendererAPIService，获取一个promise
+        noteRendererAPIService(this_vm.noteID).then(response => {
+          // 得到response后，模拟网络延迟3S
+          setTimeout(() => {
+            console.log(response);
+            this_vm.noteDetail = response.data.data.noteDetail;
+            loading.close();  //关闭传入的loading
+          }, 3000);
+        }).catch(error => {
+          // 得到error后，模拟网络延迟2S
+          setTimeout(() => {
+            console.log(error);
+            loading.close();  //关闭传入的loading
+            this_vm.$message({
+              message: '从服务器拉取笔记内容失败！错误原因：' + error.message,
+              type: 'error',
+              duration: 2000,
+              showClose: true,
+            });
+          }, 2000);
+        });
       },
 
       // 在DOM更新后将所有section的title存储到vuex中
