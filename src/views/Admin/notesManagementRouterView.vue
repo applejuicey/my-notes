@@ -1,5 +1,5 @@
 <template>
-  <div class="admin-notes-management-router-view">
+  <div class="notes-management-router-view">
     <router-view></router-view>
   </div>
 </template>

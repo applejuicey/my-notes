@@ -37,24 +37,24 @@ export default new Router({
         },
         {
           path: 'manageNote',
-          component: () => import('./views/Admin/AdminNotesManagementRouterView.vue'),
+          component: () => import('./views/Admin/notesManagementRouterView.vue'),
           children: [
             {
               path: '',
-              name: 'adminNotesManagement',
-              component: () => import('./views/Admin/AdminNotesManagement.vue'),
+              name: 'notesManagement',
+              component: () => import('./views/Admin/notesManagement.vue'),
             },
             {
               path: ':noteID',
               name: 'noteManagement',
-              component: () => import('./views/Admin/AdminNoteManagement.vue'),
+              component: () => import('./views/Admin/noteManagement.vue'),
             }
           ],
         },
         {
           path: 'createNote',
-          name: 'adminCreateNote',
-          component: () => import('./views/Admin/AdminCreateNote.vue'),
+          name: 'createNote',
+          component: () => import('./views/Admin/createNote.vue'),
         },
       ],
     },

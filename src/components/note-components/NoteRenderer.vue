@@ -1,4 +1,5 @@
 <!--接受noteID作为API调用的参数，拉取到数据后渲染出笔记-->
+<!--或者直接接受一个noteDetail，渲染出笔记-->
 <!--调用该组件时，其父级元素需要设置一个height，该组件才能显示纵向滚动条-->
 <template>
   <div class="note-renderer">
@@ -10,7 +11,7 @@
         <!--笔记标题-->
         <el-row class="note-header-title">
           <el-col :span="24">
-            <h1>{{noteDetail.title}}</h1>
+            <h1>{{noteDetailSaver.title}}</h1>
           </el-col>
         </el-row>
         <!--笔记标题-->
@@ -19,19 +20,19 @@
         <el-row class="note-header-briefInfo">
           <el-col :span="6">
             发布时间:&nbsp;
-            <span>{{noteDetail.publishTime}}</span>
+            <span>{{noteDetailSaver.publishTime}}</span>
           </el-col>
           <el-col :span="6">
             作者:&nbsp;
-            <span>{{noteDetail.author}}</span>
+            <span>{{noteDetailSaver.author}}</span>
           </el-col>
           <el-col :span="6">
             阅读量:&nbsp;
-            <span>{{noteDetail.clickedCounter}}</span>
+            <span>{{noteDetailSaver.clickedCounter}}</span>
           </el-col>
           <el-col :span="6">
             标签:&nbsp;
-            <template v-for="(tag, index) in noteDetail.tags">
+            <template v-for="(tag, index) in noteDetailSaver.tags">
               <el-tag size="mini">{{tag}}</el-tag>&nbsp;
             </template>
           </el-col>
@@ -46,7 +47,7 @@
     <el-row class="note-body">
       <el-col :span="24">
 
-        <template v-for="(section, index) in noteDetail.noteContent">
+        <template v-for="(section, index) in noteDetailSaver.noteContent">
           <el-row class="noteSectionRow" :id="'sectionRowNumber' + (index + 1)">
             <el-col :span="24">
               <div class="sectionTitle">
@@ -76,14 +77,18 @@
       // 用noteID作为参数来从服务器拉取数据
       noteID: {
         type: String,
-        required: true,
+        required: false,
       },
+      noteDetail: {
+        type: Object,
+        required: false,
+      }
     },
     data() {
       return {
 
         // 用来保存从服务器拉取到的笔记
-        noteDetail: {},
+        noteDetailSaver: {},
 
       };
     },
@@ -108,8 +113,15 @@
         target: document.querySelector('.note-renderer'),
       });
 
-      // 挂载时调用API，并且传入Loading的实例用以关闭
-      this_vm.noteRendererAPIService(noteRendererLoading);
+      // 挂载时检测父组件传过来的数据是什么，使用不同的方法为noteDetailSaver获取数据
+      if (this_vm.noteID !== '' && this_vm.noteID !== undefined) {
+        // noteID不是空字符串而且也不是undefined，则说明父组件传入的有合法的noteID，于是调用API获取数据，并且传入Loading的实例用以关闭
+        this_vm.noteRendererAPIService(noteRendererLoading);
+      } else {
+        // noteID是空字符串或者是undefined，说明父组件传过来的直接是个noteDetail对象
+        this_vm.noteDetailSaver = this_vm.noteDetail;
+        noteRendererLoading.close();
+      }
 
     },
     updated () {
@@ -146,7 +158,7 @@
           // 得到response后，模拟网络延迟3S
           setTimeout(() => {
             console.log(response);
-            this_vm.noteDetail = response.data.data.noteDetail;
+            this_vm.noteDetailSaver = response.data.data.noteDetail;
             loading.close();  //关闭传入的loading
           }, 3000);
         }).catch(error => {
@@ -209,5 +221,11 @@
   }
   .sectionContent >>> pre {
     overflow: scroll;
+  }
+  .sectionContent >>> strong {
+    background-color: #FF8C00;
+    display: inline-block;
+    border-radius: 5px;
+    padding: 2px 5px 2px 5px;
   }
 </style>

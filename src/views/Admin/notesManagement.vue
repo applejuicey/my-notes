@@ -1,5 +1,5 @@
 <template>
-  <div class="admin-note-management">
+  <div class="notes-management">
     admin-note-management
     管理所有笔记
     <content-card :cardName="'no3'" :noteTitleLinkArray="noteTitleLinks.type1"></content-card>

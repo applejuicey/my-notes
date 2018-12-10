@@ -1,5 +1,5 @@
 <template>
-  <div class="admin-note-management">
+  <div class="note-management">
     admin-note-management
     {{$route.params.noteID}}
   </div>

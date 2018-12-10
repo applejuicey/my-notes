@@ -1,5 +1,5 @@
 <template>
-  <div class="admin-create-note">
+  <div class="create-note">
 
     <div class="editor-container">
       <el-row>
@@ -23,7 +23,7 @@
                 </el-input>
                 当前标签:
                 <template v-for="(tag, index) in noteDetail.tags">
-                  <el-tag closable @close="deleteTag(tag)">{{tag}}</el-tag>&nbsp;
+                  <el-tag closable @close="removeTag(tag)">{{tag}}</el-tag>&nbsp;
                 </template>
               </el-form-item>
               <template v-for="(section, index) in noteDetail.noteContent">
@@ -131,7 +131,7 @@
       },
 
       // 为笔记删除一个标签
-      deleteTag: function (tag) {
+      removeTag: function (tag) {
         let this_vm = this;
         // 获取当前点击的tag的index
         let tagIndex = this_vm.noteDetail.tags.indexOf(tag);
@@ -144,8 +144,6 @@
             type: 'success',
           });
         }
-
-
       },
 
       // 为笔记增加一个section
@@ -180,16 +178,42 @@
           });
           return;
         }
-        // 获取当前点击的section的index
-        let sectionIndex = this_vm.noteDetail.noteContent.indexOf(section);
-        if (sectionIndex !== -1) {
-          // 从找到的那个位置开始，删除一个元素
-          let deletedElementsArray = this_vm.noteDetail.noteContent.splice(sectionIndex, 1);
-          this_vm.$message({
-            showClose: true,
-            message: '成功删除标题为"' + deletedElementsArray[0].sectionTitle + '"的Section！' ,
-            type: 'success',
+        // 防止误删：判断当前点击的section里是否有内容
+        if (section.sectionContent !=='') {
+          this_vm.$confirm('该section中有内容，请确认是否删除！', '接下来你是不是要删我了', {
+            confirmButtonText: '删除',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            // 获取当前点击的section的index
+            let sectionIndex = this_vm.noteDetail.noteContent.indexOf(section);
+            if (sectionIndex !== -1) {
+              // 从找到的那个位置开始，删除一个元素
+              let deletedElementsArray = this_vm.noteDetail.noteContent.splice(sectionIndex, 1);
+              this_vm.$message({
+                showClose: true,
+                message: '成功删除标题为"' + deletedElementsArray[0].sectionTitle + '"的Section！' ,
+                type: 'success',
+              });
+            }
+          }).catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消删除'
+            });
           });
+        } else {
+          // 获取当前点击的section的index
+          let sectionIndex = this_vm.noteDetail.noteContent.indexOf(section);
+          if (sectionIndex !== -1) {
+            // 从找到的那个位置开始，删除一个元素
+            let deletedElementsArray = this_vm.noteDetail.noteContent.splice(sectionIndex, 1);
+            this_vm.$message({
+              showClose: true,
+              message: '成功删除标题为"' + deletedElementsArray[0].sectionTitle + '"的Section！' ,
+              type: 'success',
+            });
+          }
         }
       },
 

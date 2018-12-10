@@ -6,8 +6,9 @@
     </div>
     <div>
       <h1>登陆后</h1>
-      <router-link :to="{name: 'adminCreateNote'}">新建笔记</router-link>
-      <router-link :to="{name: 'adminNotesManagement'}">管理笔记</router-link>
+      <router-link :to="{name: 'createNote'}">新建笔记</router-link>
+      <br>
+      <router-link :to="{name: 'notesManagement'}">管理笔记</router-link>
     </div>
   </div>
 </template>
