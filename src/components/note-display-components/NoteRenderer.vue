@@ -1,5 +1,10 @@
-<!--接受noteID作为API调用的参数，拉取到数据后渲染出笔记-->
-<!--或者直接接受一个noteDetail，渲染出笔记-->
+<!--
+  接受noteID作为参数：
+  如果ID为8*******（8开头，8位数），则从IndexedDB中获取笔记数据；
+  如果ID为0*******（0开头，8位数），则通过API获取笔记数据；
+  如果ID为1*******（1开头，8位数），表明该组件用于实时预览笔记，还需要传入一个noteDetail用于渲染。
+  获取到数据后渲染出笔记。
+-->
 <!--调用该组件时，其父级元素需要设置一个height，该组件才能显示纵向滚动条-->
 <template>
   <div class="note-renderer">
@@ -68,40 +73,47 @@
 
 <script>
   import { noteRendererAPIService } from '@/api/serviceList.js';
+  import { OpenOrCreateAnIndexedDB, getARecordThroughKey } from '@/config/indexedDB/indexedDB.js';
   export default {
     name: 'note-renderer',
     components: {
 
     },
     props: {
-      // 用noteID作为参数来从服务器拉取数据
       noteID: {
         type: String,
-        required: false,
+        required: true,
       },
       noteDetail: {
         type: Object,
         required: false,
-      }
+      },
     },
     data() {
       return {
 
-        // 用来保存从服务器拉取到的笔记
-        noteDetailSaver: {},
+        noteDetailSaver: {
+          author: '',
+          clickedCounter: '',
+          noteContent: [
+            {
+              sectionContent: '',
+              sectionTitle: '',
+            },
+          ],
+          publishTime: '',
+          tags: [''],
+          title: '',
+        },
 
       };
     },
     computed : {
 
-
-
     },
     mounted () {
 
       let this_vm = this;
-
-      // 组件挂载时执行：
 
       // 挂载时获取一个Loading的实例
       let noteRendererLoading = this.$loading({
@@ -113,13 +125,42 @@
         target: document.querySelector('.note-renderer'),
       });
 
-      // 挂载时检测父组件传过来的数据是什么，使用不同的方法为noteDetailSaver获取数据
-      if (this_vm.noteID !== '' && this_vm.noteID !== undefined) {
-        // noteID不是空字符串而且也不是undefined，则说明父组件传入的有合法的noteID，于是调用API获取数据，并且传入Loading的实例用以关闭
-        this_vm.noteRendererAPIService(noteRendererLoading);
+      // 挂载时检测父组件传过来的noteID，使用不同的方法为noteDetailSaver获取数据
+      let splitArray = this_vm.noteID.split('');
+      if (splitArray.length === 8 && splitArray[0] === '0') {
+        // 说明需要从API获取数据：
+        this_vm.noteRendererAPIServiceCaller(noteRendererLoading);
+      } else if (splitArray.length === 8 && splitArray[0] === '8') {
+        // 说明需要从indexedDB获取数据：
+        // 准备数据库相关信息
+        let databaseInfo = {
+          name: 'browserNotesDatabase',
+          version: 1,
+          notesTable: {
+            name: 'tempNotes',
+          },
+        };
+        // 准备key
+        let key = parseInt(this_vm.noteID) - 80000000;
+        OpenOrCreateAnIndexedDB(databaseInfo).then(function (returnedDatabase) {
+          console.log(returnedDatabase);
+          getARecordThroughKey(key, returnedDatabase).then(function (data) {
+            console.log(data);
+            this_vm.noteDetailSaver = data;
+            noteRendererLoading.close();
+          }).catch(function (data) {
+            console.log(data);
+            noteRendererLoading.close();
+          });
+        });
+      } else if (splitArray.length === 8 && splitArray[0] === '1') {
+        // 说明需要从同时传过来的noteDetail获取数据：
+        if (this_vm.noteDetail) {
+          this_vm.noteDetailSaver = this_vm.noteDetail;
+          noteRendererLoading.close();
+        }
       } else {
-        // noteID是空字符串或者是undefined，说明父组件传过来的直接是个noteDetail对象
-        this_vm.noteDetailSaver = this_vm.noteDetail;
+        // 传过来的noteID有问题
         noteRendererLoading.close();
       }
 
@@ -151,7 +192,7 @@
       },
 
       // 根据父组件传来的noteID调用API；调用成功或失败都会关闭loading
-      noteRendererAPIService: function (loading) {
+      noteRendererAPIServiceCaller: function (loading) {
         let this_vm = this;
         // 将noteID传入noteRendererAPIService，获取一个promise
         noteRendererAPIService(this_vm.noteID).then(response => {

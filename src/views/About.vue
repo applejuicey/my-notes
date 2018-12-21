@@ -63,7 +63,7 @@
 </template>
 
 <script>
-  import NoteRenderer from '@/components/note-components/NoteRenderer.vue'
+  import NoteRenderer from '@/components/note-display-components/NoteRenderer.vue'
   export default {
     name: 'about',
     components: {

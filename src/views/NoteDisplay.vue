@@ -54,8 +54,8 @@
 </template>
 
 <script>
-  import LeftCatalogNav from '@/components/note-components/LeftCatalogNav.vue';
-  import NoteRenderer from '@/components/note-components/NoteRenderer.vue';
+  import LeftCatalogNav from '@/components/note-display-components/LeftCatalogNav.vue';
+  import NoteRenderer from '@/components/note-display-components/NoteRenderer.vue';
   export default {
     name: 'note-display',
     components: {

@@ -29,32 +29,42 @@ export default new Router({
     {
       path: '/admin',
       component: () => import('./views/Admin/AdminRouterView.vue'),
+      meta: {
+        isRouterView: true,
+        displayedName: '管理员首页',
+      },
       children: [
         {
           path: '',
-          name: 'adminLogin',
-          component: () => import('./views/Admin/AdminLogin.vue'),
+          name: 'admin',  //为了方便breadcrumb的使用，默认路径的name规定为和path相同
+          component: () => import('./views/Admin/Admin.vue'),
+          meta: {
+            displayedName: '管理员首页',
+          },
         },
         {
-          path: 'manageNote',
-          component: () => import('./views/Admin/notesManagementRouterView.vue'),
-          children: [
-            {
-              path: '',
-              name: 'notesManagement',
-              component: () => import('./views/Admin/notesManagement.vue'),
-            },
-            {
-              path: ':noteID',
-              name: 'noteManagement',
-              component: () => import('./views/Admin/noteManagement.vue'),
-            }
-          ],
+          path: 'listnotes',
+          name: 'listNotes',
+          component: () => import('./views/Admin/listNotes.vue'),
+          meta: {
+            displayedName: '管理所有笔记',
+          },
         },
         {
-          path: 'createNote',
+          path: 'editnote/:noteid',
+          name: 'editNote',
+          component: () => import('./views/Admin/editNote.vue'),
+          meta: {
+            displayedName: '编辑笔记',
+          },
+        },
+        {
+          path: 'createnote',
           name: 'createNote',
           component: () => import('./views/Admin/createNote.vue'),
+          meta: {
+            displayedName: '新建笔记',
+          },
         },
       ],
     },

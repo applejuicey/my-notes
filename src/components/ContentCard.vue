@@ -1,4 +1,11 @@
-<!--接受cardName作为卡片名称，接受category作为卡片中笔记的分类从服务器拉取数据，渲染出笔记的连接-->
+<!--接受cardName作为卡片名称-->
+<!--
+  接受category作为分类名从服务器拉取数据
+  如果category为original,rewirted,copied，则从服务器获取对应分类的数据；
+  如果category为all，则从服务器获取所有分类的数据；
+  如果category为indexedDB，则从浏览器的indexedDB中获取数据，同时还需要传过来queryPackage（包含起始key，数量n）。
+  获取到数据后渲染出笔记连接。
+-->
 <template>
   <div class="content-card">
 
@@ -11,7 +18,7 @@
 
       <!--body的唯一ID用于Loading的target-->
       <div :id="'cardNo' + uniqueIdentifier + 'Body'" class="card-body-container">
-        <template v-for="(noteTitleItem, index) in noteTitleLinkArray">
+        <template v-for="(noteTitleItem, index) in noteTitleLinkArraySaver">
           <div class="note-title-container">
             <router-link :to="{name: 'noteDisplay', params: { noteid: noteTitleItem.noteID }}" tag="span" class="note-title-link">
               {{noteTitleItem.noteTitle}}
@@ -26,6 +33,7 @@
 </template>
 
 <script>
+  import { OpenOrCreateAnIndexedDB, getNRecordsThroughKey } from '@/config/indexedDB/indexedDB.js';
   import { contentCardAPIService } from '@/api/serviceList.js';
   export default {
     name: 'content-card',
@@ -37,17 +45,25 @@
         type: String,
         required: true,
       },
-      // 用category来从服务器拉取数据
       category: {
         type: String,
         required: true,
+      },
+      queryPackage: {
+        type: Object,
+        required: false,
       },
     },
     data() {
       return {
 
         // noteTitleLinkArray用来保存从服务器拉取到的数据
-        noteTitleLinkArray: [],
+        noteTitleLinkArraySaver: [
+          {
+            noteID: '',
+            noteTitle: '',
+          }
+        ],
         // uniqueIdentifier用来为每个card生成唯一的ID
         uniqueIdentifier: new Date().getTime(),
 
@@ -70,8 +86,41 @@
         target: document.querySelector('#cardNo' + this_vm.uniqueIdentifier + 'Body'),
       });
 
-      // 挂载时调用API，并且传入Loading的实例用以关闭
-      this_vm.contentCardAPIService(contentCardLoading);
+      // 挂载时检测父组件传过来category，使用不同的方法为noteTitleLinkArraySaver获取数据
+      let apiPack = ['original', 'rewrited', 'copied', 'all'];
+      if (apiPack.indexOf(this_vm.category) !== -1) {
+        // 从服务器获取数据
+        this_vm.contentCardAPIServiceCaller(contentCardLoading);
+      } else {
+        // 从IndexedDB获取数据
+        // 准备数据库相关信息
+        let databaseInfo = {
+          name: 'browserNotesDatabase',
+          version: 1,
+          notesTable: {
+            name: 'tempNotes',
+          },
+        };
+        OpenOrCreateAnIndexedDB(databaseInfo).then(function (returnedDatabase) {
+          getNRecordsThroughKey(this_vm.queryPackage.key, this_vm.queryPackage.n, returnedDatabase).then(function (data) {
+            // 将数据库返回的数据整理正ContentCard可以解析的形式
+            let tempArray = [];
+            for (let item of data) {
+              tempArray.push(
+                  {
+                    noteID: item.IDBKey,
+                    noteTitle: item.IDBValue.title,
+                  },
+              );
+            }
+            this_vm.noteTitleLinkArraySaver = tempArray;
+            contentCardLoading.close();
+          }).catch(function (data) {
+            console.log(data);
+            contentCardLoading.close();
+          });
+        });
+      }
 
     },
     computed: {
@@ -81,14 +130,14 @@
     methods: {
 
       // 根据父组件传来的category调用API；调用成功或失败都会关闭loading
-      contentCardAPIService: function (loading) {
+      contentCardAPIServiceCaller: function (loading) {
         let this_vm = this;
         // 将category传入contentCardAPIService，获取一个promise
         contentCardAPIService(this_vm.category).then(response => {
           // 得到response后，模拟网络延迟3S
           setTimeout(() => {
             console.log(response);
-            this_vm.noteTitleLinkArray = response.data.data.noteTitleLinkArray;
+            this_vm.noteTitleLinkArraySaver = response.data.data.noteTitleLinkArray;
             loading.close();  //关闭传入的loading
           }, 3000);
         }).catch(error => {

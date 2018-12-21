@@ -91,7 +91,7 @@
       },
 
     },
-    watch : {
+    watch: {
 
     },
     mounted () {

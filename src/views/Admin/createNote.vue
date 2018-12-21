@@ -10,7 +10,7 @@
 
             <h1>笔记编辑器</h1>
 
-            <el-form ref="form" :model="noteDetail" class="markdown-editor-form">
+            <el-form :model="noteDetail" class="markdown-editor-form" >
               <el-form-item label="笔记标题:">
                 <el-input v-model="noteDetail.title" placeholder="请输入笔记标题"></el-input>
               </el-form-item>
@@ -39,9 +39,9 @@
               </template>
 
               <el-form-item>
-                <el-button type="success">保存</el-button>
+                <el-button type="success" @click="saveToIndexedDB">保存至IndexedDB</el-button>
                 <el-button type="primary" @click="submitNote">提交</el-button>
-                <el-button>返回笔记管理</el-button>
+                <el-button @click="returnToNotesManagement">返回笔记管理</el-button>
               </el-form-item>
             </el-form>
 
@@ -51,7 +51,8 @@
         <el-col :span="12">
           <div class="preview-container">
             <h1>笔记预览</h1>
-            <note-renderer :noteDetail="noteDetail"></note-renderer>
+            <!--note-renderer用于预览，传入noteID以1开头，同时还要传入noteDetail-->
+            <note-renderer :noteID="'10000000'" :noteDetail="noteDetail"></note-renderer>
           </div>
         </el-col>
 
@@ -62,7 +63,8 @@
 </template>
 
 <script>
-  import NoteRenderer from '@/components/note-components/NoteRenderer.vue';
+  import { addARecordToAnIndexedDB } from '@/config/indexedDB/indexedDB.js';
+  import NoteRenderer from '@/components/note-display-components/NoteRenderer.vue';
   export default {
     name: 'admin-create-note',
     components: {
@@ -92,7 +94,6 @@
 
     },
     mounted () {
-
 
     },
     methods: {
@@ -217,6 +218,16 @@
         }
       },
 
+      // 保存笔记至IndexedDB
+      saveToIndexedDB: function () {
+        let this_vm = this;
+        addARecordToAnIndexedDB(this_vm.noteDetail, this_vm.$store.state.IDBDatabaseInfo).then(function (data) {
+          // 提交后，若成功则重置表单
+        }).catch(function (error) {
+          console.error(error);
+        });
+      },
+
       // 提交笔记
       submitNote: function () {
         let this_vm = this;
@@ -228,16 +239,24 @@
         });
       },
 
+      // 返回笔记管理页面
+      returnToNotesManagement: function () {
+        this.$router.push({ name: 'listNotes' });
+      },
+
     },
   }
 </script>
 
 <style scoped>
+  .create-note {
+    height: 78vh;
+  }
   .editor-container {
-    height: 88vh;
+    height: 78vh;
   }
   .markdown-container {
-    height: 88vh;
+    height: 78vh;
     overflow-y: scroll;
   }
   .markdown-container h1 {
@@ -252,8 +271,8 @@
     text-align: left;
   }
   .preview-container {
-    height: 88vh;
-    overflow-y: scroll;
+    height: 78vh;
+    overflow-y: hidden;
   }
   .preview-container h1 {
     margin: 5px 0 5px 0;

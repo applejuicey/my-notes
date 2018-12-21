@@ -59,6 +59,7 @@
   }
   .top-nav-container {
     height: 10vh;
+    max-height: 70px;
     width: 100%;
   }
   .main-content-container {
